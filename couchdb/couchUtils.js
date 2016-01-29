@@ -63,7 +63,7 @@
         return r.promise;
     }
     exports.mergeWithoutConflictAsync = mergeWithoutConflictAsync;
-    function getAsync(db, id) {
+    function get(db, id) {
         let r = deferredUtils_1.defer();
         db.get(id, (err, res) => {
             if (err) {
@@ -75,7 +75,7 @@
         });
         return r.promise;
     }
-    exports.getAsync = getAsync;
+    exports.get = get;
     function removeWithoutConflict(db, id, callback) {
         var myCallback = function (err, data) {
             if (err && err.error === 'conflict') {
@@ -135,5 +135,31 @@
         return r.promise;
     }
     exports.view = view;
+    function create(db) {
+        let r = deferredUtils_1.defer();
+        db.create((err, res) => {
+            if (err) {
+                r.reject(err);
+            }
+            else {
+                r.resolve(res);
+            }
+        });
+        return r.promise;
+    }
+    exports.create = create;
+    function exists(db) {
+        let r = deferredUtils_1.defer();
+        db.exists((err, res) => {
+            if (err) {
+                r.reject(err);
+            }
+            else {
+                r.resolve(res);
+            }
+        });
+        return r.promise;
+    }
+    exports.exists = exists;
 });
 //# sourceMappingURL=couchUtils.js.map

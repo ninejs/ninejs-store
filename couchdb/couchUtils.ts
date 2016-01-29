@@ -62,7 +62,7 @@ export function mergeWithoutConflictAsync(db: Database, id: string, doc: any, co
 	return r.promise;
 }
 
-export function getAsync(db: Database, id: string) {
+export function get(db: Database, id: string) {
 	let r = defer<any>();
 	db.get(id, (err, res) => {
 		if (err) {
@@ -135,4 +135,29 @@ export function view<T>(db: Database, viewName: string, args: ViewParameters): P
 	return r.promise;
 }
 
+export function create(db: Database) {
+	let r = defer<any>();
+	db.create((err, res) => {
+		if (err) {
+			r.reject(err);
+		}
+		else {
+			r.resolve(res);
+		}
+	});
+	return r.promise;
+}
+
+export function exists(db: Database) {
+	let r = defer<any>();
+	db.exists((err, res) => {
+		if (err) {
+			r.reject(err);
+		}
+		else {
+			r.resolve(res);
+		}
+	});
+	return r.promise;
+}
 
