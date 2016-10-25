@@ -19,6 +19,7 @@
     "typings/tsd.d.ts",
 
     "./module.ts",
+    "./couchdb/common.ts",
     "./couchdb/couchUtils.ts",
     "./CouchDB.ts"
   ]

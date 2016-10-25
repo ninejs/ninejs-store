@@ -1,46 +1,12 @@
 'use strict';
+import { Database } from './couchdb/common'
+export { Database, ViewParameters } from './couchdb/common'
+import { default as utils, CouchUtils } from './couchdb/couchUtils'
 
 declare var require: any;
 let cradle: any = require('cradle');
 
-export interface ViewParameters {
-    /*
-    key. Mutually exclusive with 'keys' parameter
-     */
-    key?: string;
-    /*
-    If true then the reduce part of the view is processed
-     */
-    reduce?: boolean;
-    /*
-    key array. Mutually exclusive with 'key' parameter
-     */
-    keys?: string[];
-    /*
 
-     */
-    group?: boolean;
-    /*
-    If true, whole documents are included in the view results
-     */
-    include_docs?: boolean;
-    /*
-    Function that maps the result array. Useful for include_docs: true
-    Optional
-     */
-    map?: (source: any) => any;
-}
-
-export interface Database {
-    create (callback: (err: any, resp: any) => void): void;
-    exists (callback: (err: any, resp: boolean) => void): void;
-    get (id:string, callback: (err: any, result: any) => void): void;
-    view (viewName: string, args: ViewParameters, callback: (err: any, result: any) => void): void;
-    save (data: any, callback: (err?: any, data?: any) => void): void;
-    save (id: string, data: any, callback: (err?: any, data?: any) => void): void;
-    save (id: string, rev: string, data: any, callback: (err?: any, data?: any) => void): void;
-    remove (id: string, rev: string, callback: (err?: any, data?: any) => void): void;
-}
 export interface CouchConnection {
     database: (name: string) => Database;
 }
@@ -50,6 +16,7 @@ var Connection: {
 } = cradle.Connection;
 
 class CouchDB {
+    utils: CouchUtils;
     profiles: { [ name: string ]: CouchConnection }
     constructor (config: any) {
         this.profiles = {};
@@ -61,5 +28,6 @@ class CouchDB {
         return this.profiles[name];
     }
 }
+CouchDB.prototype.utils = utils;
 
 export default CouchDB;

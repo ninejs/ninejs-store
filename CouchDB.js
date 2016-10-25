@@ -3,10 +3,11 @@
         var v = factory(require, exports); if (v !== undefined) module.exports = v;
     }
     else if (typeof define === 'function' && define.amd) {
-        define(["require", "exports"], factory);
+        define(["require", "exports", './couchdb/couchUtils'], factory);
     }
 })(function (require, exports) {
     'use strict';
+    var couchUtils_1 = require('./couchdb/couchUtils');
     let cradle = require('cradle');
     var Connection = cradle.Connection;
     class CouchDB {
@@ -20,6 +21,7 @@
             return this.profiles[name];
         }
     }
+    CouchDB.prototype.utils = couchUtils_1.default;
     exports.default = CouchDB;
 });
 //# sourceMappingURL=CouchDB.js.map

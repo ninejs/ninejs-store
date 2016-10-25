@@ -29,13 +29,14 @@
         };
         if ((id !== null) && (id !== undefined)) {
             db.get(id, function (err, data) {
+                let _d = data;
                 if (err) {
                     db.save(id, doc, myCallback);
                 }
                 else {
                     if (!condition || condition(data)) {
                         var merged = merge({}, data, doc);
-                        merged['_rev'] = data['_rev'];
+                        merged['_rev'] = _d['_rev'];
                         db.save(id, merged['_rev'], merged, myCallback);
                     }
                     else {
@@ -161,5 +162,16 @@
         return r.promise;
     }
     exports.exists = exists;
+    exports.default = {
+        merge: merge,
+        mergeWithoutConflict: mergeWithoutConflict,
+        mergeWithoutConflictAsync: mergeWithoutConflictAsync,
+        get: get,
+        removeWithoutConflict: removeWithoutConflict,
+        removeWithoutConflictAsync: removeWithoutConflictAsync,
+        view: view,
+        create: create,
+        exists: exists
+    };
 });
 //# sourceMappingURL=couchUtils.js.map
