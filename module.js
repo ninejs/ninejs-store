@@ -1,14 +1,16 @@
 (function (factory) {
-    if (typeof module === 'object' && typeof module.exports === 'object') {
-        var v = factory(require, exports); if (v !== undefined) module.exports = v;
+    if (typeof module === "object" && typeof module.exports === "object") {
+        var v = factory(require, exports);
+        if (v !== undefined) module.exports = v;
     }
-    else if (typeof define === 'function' && define.amd) {
-        define(["require", "exports", './CouchDB', 'ninejs/modules/moduleDefine'], factory);
+    else if (typeof define === "function" && define.amd) {
+        define(["require", "exports", "./CouchDB", "ninejs/modules/moduleDefine"], factory);
     }
 })(function (require, exports) {
     'use strict';
-    var CouchDB_1 = require('./CouchDB');
-    var moduleDefine_1 = require('ninejs/modules/moduleDefine');
+    Object.defineProperty(exports, "__esModule", { value: true });
+    const CouchDB_1 = require("./CouchDB");
+    const moduleDefine_1 = require("ninejs/modules/moduleDefine");
     exports.default = moduleDefine_1.define(['ninejs'], function (provide) {
         provide('ninejs/store/couchdb', (config, ninejs) => {
             var log = ninejs.get('logger');

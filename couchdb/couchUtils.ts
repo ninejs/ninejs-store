@@ -1,6 +1,7 @@
 'use strict';
 import { Database, ViewParameters } from './common'
-import { defer, PromiseType } from 'ninejs/core/deferredUtils'
+import { defer } from 'ninejs/core/deferredUtils'
+import {CouchConnection} from "../CouchDB";
 
 declare var require: any;
 let cradle: any = require('cradle');
@@ -67,7 +68,12 @@ export function get<T>(db: Database, id: string) {
 	let r = defer<any>();
 	db.get(id, (err, res) => {
 		if (err) {
-			r.reject(err);
+            if ((err.name === 'CouchError') && (err.error === 'not_found')) {
+            	r.resolve(null);
+            }
+            else {
+                r.reject(err);
+            }
 		}
 		else {
 			r.resolve(res);
@@ -114,7 +120,7 @@ export function removeWithoutConflictAsync(db: Database, id: string) {
 	return r.promise;
 }
 
-export function view<T>(db: Database, viewName: string, args: ViewParameters): PromiseType<T[]> {
+export function view<T>(db: Database, viewName: string, args: ViewParameters): Promise<T[]> {
 	var r = defer<T[]>();
 	let map = args.map;
 	if (map) {
@@ -160,6 +166,24 @@ export function exists(db: Database) {
 		}
 	});
 	return r.promise;
+}
+
+export function ensureDatabasesExist(connection: CouchConnection, dbNames: string[]) {
+    return dbNames.map(async dbName => {
+        let db = connection.database(dbName);
+        let found = await exists(db);
+        if (!found) {
+            await create(db);
+        }
+        return true;
+    }).reduce((acc, next) => {
+        return acc.then(result => {
+            if (!result) {
+                throw new Error('Unable to initialize database');
+            }
+            return next;
+        })
+    }, Promise.resolve(true));
 }
 
 export interface CouchUtils {

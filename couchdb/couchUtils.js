@@ -1,13 +1,23 @@
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 (function (factory) {
-    if (typeof module === 'object' && typeof module.exports === 'object') {
-        var v = factory(require, exports); if (v !== undefined) module.exports = v;
+    if (typeof module === "object" && typeof module.exports === "object") {
+        var v = factory(require, exports);
+        if (v !== undefined) module.exports = v;
     }
-    else if (typeof define === 'function' && define.amd) {
-        define(["require", "exports", 'ninejs/core/deferredUtils'], factory);
+    else if (typeof define === "function" && define.amd) {
+        define(["require", "exports", "ninejs/core/deferredUtils"], factory);
     }
 })(function (require, exports) {
     'use strict';
-    var deferredUtils_1 = require('ninejs/core/deferredUtils');
+    Object.defineProperty(exports, "__esModule", { value: true });
+    const deferredUtils_1 = require("ninejs/core/deferredUtils");
     let cradle = require('cradle');
     function merge(...args) {
         return cradle.merge(...args);
@@ -68,7 +78,12 @@
         let r = deferredUtils_1.defer();
         db.get(id, (err, res) => {
             if (err) {
-                r.reject(err);
+                if ((err.name === 'CouchError') && (err.error === 'not_found')) {
+                    r.resolve(null);
+                }
+                else {
+                    r.reject(err);
+                }
             }
             else {
                 r.resolve(res);
@@ -162,6 +177,24 @@
         return r.promise;
     }
     exports.exists = exists;
+    function ensureDatabasesExist(connection, dbNames) {
+        return dbNames.map((dbName) => __awaiter(this, void 0, void 0, function* () {
+            let db = connection.database(dbName);
+            let found = yield exists(db);
+            if (!found) {
+                yield create(db);
+            }
+            return true;
+        })).reduce((acc, next) => {
+            return acc.then(result => {
+                if (!result) {
+                    throw new Error('Unable to initialize database');
+                }
+                return next;
+            });
+        }, Promise.resolve(true));
+    }
+    exports.ensureDatabasesExist = ensureDatabasesExist;
     exports.default = {
         merge: merge,
         mergeWithoutConflict: mergeWithoutConflict,

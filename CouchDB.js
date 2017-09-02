@@ -1,13 +1,15 @@
 (function (factory) {
-    if (typeof module === 'object' && typeof module.exports === 'object') {
-        var v = factory(require, exports); if (v !== undefined) module.exports = v;
+    if (typeof module === "object" && typeof module.exports === "object") {
+        var v = factory(require, exports);
+        if (v !== undefined) module.exports = v;
     }
-    else if (typeof define === 'function' && define.amd) {
-        define(["require", "exports", './couchdb/couchUtils'], factory);
+    else if (typeof define === "function" && define.amd) {
+        define(["require", "exports", "./couchdb/couchUtils"], factory);
     }
 })(function (require, exports) {
     'use strict';
-    var couchUtils_1 = require('./couchdb/couchUtils');
+    Object.defineProperty(exports, "__esModule", { value: true });
+    const couchUtils_1 = require("./couchdb/couchUtils");
     let cradle = require('cradle');
     var Connection = cradle.Connection;
     class CouchDB {
